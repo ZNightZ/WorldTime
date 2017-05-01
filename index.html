@@ -63,15 +63,12 @@
     }
   </style>
 
+  <!--<meta http-equiv="refresh" content="10">-->
 </head>
-  <script type="text/javascript">
-function load()
-{
-setTimeout("window.open(https://https://znightz.github.io/WorldTime/, '_self');", 5000);
-}
-</script>
-<body onload="load()">
-  
+
+
+
+<body>
   <script src="https://unpkg.com/vue"></script>
 
   <center>
@@ -80,22 +77,23 @@ setTimeout("window.open(https://https://znightz.github.io/WorldTime/, '_self');"
 
 
   <div id="Location">
-    <h1> {{getUTC().toUTCString()}} </h1>
+    <h1 id="clock"> {{now.toUTCString()}} </h1>
     <p><button class="app-button">Europe</button></p>
     <table>
       <tbody>
         <tr v-for="city in cities ">
           <td class="app-city"> {{ city.name }} </td>
           <td class="app-offsettime"> {{ city.offsetDisplay }} </td>
-          <td class="app-time"> {{ calculateTime(getUTC(), city.offsetCode) }} </td>
+          <td class="app-time"> {{ calculateTime(now, city.offsetCode) }} </td>
         </tr>
       </tbody>
     </table>
   </div>
 
 
-  <script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
-   <script>
+ 
+<script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
+<script>
   // Initialize Firebase
   var config = {
     apiKey: "AIzaSyBrrA3j57w_7IbtDbiKQLBk4OCRsLuvOfg",
@@ -107,18 +105,16 @@ setTimeout("window.open(https://https://znightz.github.io/WorldTime/, '_self');"
   };
   firebase.initializeApp(config);
 </script>
-  
 
 
   <script type="text/javascript">
     var app = new Vue
       ({
+
         el: '#Location',
         data: {
-          cities: [
-
-          ]
-          ,
+          cities: [],
+          now: new Date()
         },
         methods: {
           calculateTime: function (time, code) {
@@ -129,14 +125,16 @@ setTimeout("window.open(https://https://znightz.github.io/WorldTime/, '_self');"
 
 
             return words[0] + "   " + words[1]
-          },
-          getUTC: function () {
-            var utcTime = new Date();
-            return utcTime;
           }
+          
         }
 
       })
+
+    setInterval(() => {
+      app.now = new Date()
+    }, 1000);
+
     var database = firebase.database()
     var citiesDatabase = database.ref()
     citiesDatabase.on("value", (snapshot) => {
@@ -147,11 +145,6 @@ setTimeout("window.open(https://https://znightz.github.io/WorldTime/, '_self');"
       return ids.map(id => data[id])
     }
   </script>
-
-
-
-
-
 
 </body>
 
