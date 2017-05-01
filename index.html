@@ -42,9 +42,19 @@
       font-family: Comic Sans MS;
     }
     
-    .app-time {
+    .app-offsettime {
       color: white;
       background-color: #449d44;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-weight: 500;
+      line-height: 1.1;
+      font-family: Georgia;
+    }
+    
+    .app-time {
+      color: white;
+      background-color: #530E8A;
       margin-top: 20px;
       margin-bottom: 10px;
       font-weight: 500;
@@ -65,12 +75,12 @@
 
   <div id="Location">
     <h1> {{getUTC().toUTCString()}} </h1>
-    <p><button class="app-button">South East Asia</button></p>
+    <p><button class="app-button">Europe</button></p>
     <table>
       <tbody>
         <tr v-for="city in cities ">
           <td class="app-city"> {{ city.name }} </td>
-          <td class="app-time"> {{ city.offsetDisplay }} </td>
+          <td class="app-offsettime"> {{ city.offsetDisplay }} </td>
           <td class="app-time"> {{ calculateTime(getUTC(), city.offsetCode) }} </td>
         </tr>
       </tbody>
@@ -79,9 +89,7 @@
 
 
   <script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
- 
-<script src="https://www.gstatic.com/firebasejs/3.9.0/firebase.js"></script>
-<script>
+   <script>
   // Initialize Firebase
   var config = {
     apiKey: "AIzaSyBrrA3j57w_7IbtDbiKQLBk4OCRsLuvOfg",
@@ -93,6 +101,7 @@
   };
   firebase.initializeApp(config);
 </script>
+  
 
 
   <script type="text/javascript">
@@ -101,16 +110,19 @@
         el: '#Location',
         data: {
           cities: [
-            
+
           ]
           ,
         },
         methods: {
           calculateTime: function (time, code) {
-            var dateTime = time.toLocaleString("en-US", { timeZone: code, timeZoneName: "short" })
+            var dateTime = time.toLocaleString("en-US", { timeZone: code, timeZoneName: "short", hour12: false })
 
-                            
-            return dateTime
+            var words = dateTime.split(" ")
+
+
+
+            return words[0] + "   " + words[1]
           },
           getUTC: function () {
             var utcTime = new Date();
@@ -119,11 +131,11 @@
         }
 
       })
-      var database = firebase.database()
-      var citiesDatabase = database.ref()
-      citiesDatabase.on("value", (snapshot) => {
-         app.cities = (convertFromFirebase(snapshot.val()))
-      })
+    var database = firebase.database()
+    var citiesDatabase = database.ref()
+    citiesDatabase.on("value", (snapshot) => {
+      app.cities = (convertFromFirebase(snapshot.val()))
+    })
     var convertFromFirebase = (data) => {
       var ids = Object.keys(data)
       return ids.map(id => data[id])
